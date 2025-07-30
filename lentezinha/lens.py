@@ -3,6 +3,27 @@ from functools import reduce
 from pydantic import BaseModel
 
 
+def read(data, path: str, separator: str = ".") -> Any:
+    """Get a value from nested dict, list and Pydantic model
+
+    >>> user = {"profile": {"age": 20}}
+    >>> read(user, "profile.age")
+    20
+    """
+    return Lens(path, separator).get(data)
+
+
+def update(data: Any, path: str, value: Any, separator: str = ".") -> Any:
+    """Set a value in a nested dict, list or Pydantic model
+
+    >>> user = {"profile": {"age": 20}}
+    >>> update(user, "profile.age", 21)
+    >>> user
+    {"profile": {"age": 21}}
+    """
+    return Lens(path, separator).set(data, value)
+
+
 class Lens:
     def __init__(self, lens: str, separator: str = "."):
         if not self._is_valid(lens):

@@ -1,1 +1,6 @@
-from .lens import Lens as Lens
+from .lens import (
+    Lens as Lens,
+    read as read,
+    update as update,
+)
+
