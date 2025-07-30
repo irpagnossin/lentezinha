@@ -1,6 +1,12 @@
 # Lentezinha
 
-A tiny Lens for Python:
+Tiny Lens for Python: a single 30 KiB module to improve readability. "Lentezinha" means "little lens" in Brazilian Portuguese.
+
+## Motivation
+
+I don't like to do this: `user.get("profile", {}).get("age"))`, where `user` is a nested dictionary. I'd rather say `user.get("profile.age")`.
+
+## Usage
 
 ```python
 user = {"name": "Ana", "profile": {"age": 20}}
@@ -41,3 +47,13 @@ user = User(profile=Profile(age=20))
 age.get(user)  # == 20
 age.set(user, 27)  # == 27
 ```
+
+## Installation
+
+```shell
+pip install lentezinha
+```
+
+## TODO
+
+- Compose lenses
