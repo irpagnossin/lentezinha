@@ -18,6 +18,10 @@ def test_set_attribute_apply(user_01):
     assert user_01["user"]["profile"]["age"] == 35
 
 
+def test_set_returns_updated_value(user_01):
+    assert update(user_01, "user.profile.age", lambda a: a + 5) == 35
+
+
 def test_set_list_element_in_nested_pydantic_classes(user_02):
     update(user_02, "emails.1", "alice@hotmail.com")
     assert user_02.emails[1] == "alice@hotmail.com"

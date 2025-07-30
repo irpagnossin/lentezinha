@@ -40,6 +40,8 @@ class Lens:
             last_but_one = get_deep(data, self.keys[:-1])
         _agnostic_set(last_but_one, self.keys[-1], value)
 
+        return get_deep(data, self.keys)
+
     def _is_valid(self, path: str) -> bool:  # TODO: implement
         return True
 

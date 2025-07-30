@@ -33,6 +33,11 @@ def test_set_attribute_apply(user_01):
     assert age.get(user_01) == 35
 
 
+def test_set_returns_updated_value(user_01):
+    age = Lens("user.profile.age")
+    assert age.set(user_01, lambda a: a + 5) == 35
+
+
 def test_get_attribute_within_nested_pydantic_clases(user_02):
     age = Lens('profile.age')
     assert age.get(user_02) == 30
