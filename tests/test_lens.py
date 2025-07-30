@@ -1,0 +1,113 @@
+import pytest
+
+from pydantic import BaseModel
+from lentezinha import Lens
+
+
+class _Profile(BaseModel):
+    name: str
+    age: int
+
+
+class _User(BaseModel):
+    profile: _Profile
+    emails: list[str]
+
+
+@pytest.fixture()
+def user_01():
+    return {
+        "user": {
+            "profile": {
+                "name": "Alice",
+                "age": 30
+            },
+            "settings": {
+                "theme": "dark"
+            },
+            "emails": [
+                "alice@gmail.com",
+                "alice@hotmail.com",
+            ]
+        }
+    }
+
+
+@pytest.fixture()
+def user_02():
+    profile = _Profile(name="Alice", age=30)
+    emails = ["alice@gmail.com", "alice@hotmail.com"]
+    user = _User(profile=profile, emails=emails)
+    return user
+
+
+@pytest.fixture()
+def user_03():
+    return {
+        "user": {
+            "user.profiles": {  # Note dots
+                "name": "Alice",
+                "age": 30
+            },
+            "user emails": [  # Note spaces
+                "alice@gmail.com",
+                "alice@hotmail.com",
+            ]
+        }
+    }
+
+
+def test_get_attribute_from_nested_dicts(user_01):
+    age = Lens('user.profile.age')
+    assert age.get(user_01) == 30
+
+    name = Lens('user.profile.name')
+    assert name.get(user_01) == "Alice"
+
+
+def test_get_last_attribute_is_list_index(user_01):
+    email = Lens('user.emails.0')
+    assert email.get(user_01) == "alice@gmail.com"
+
+
+def test_set_attribute_within_nested_dicts(user_01):
+    age = Lens('user.profile.age')
+    age.set(user_01, 40)
+    assert age.get(user_01) == 40
+
+
+def test_set_list_element_at_the_end_of_chain(user_01):
+    email = Lens('user.emails.1')
+    email.set(user_01, "alice@proton.me")
+    assert email.get(user_01) == "alice@proton.me"
+
+
+def test_set_attribute_apply(user_01):
+    age = Lens("user.profile.age")
+    age.set(user_01, lambda a: a + 5)
+    assert age.get(user_01) == 35
+
+
+def test_get_attribute_within_nested_pydantic_clases(user_02):
+    age = Lens('profile.age')
+    assert age.get(user_02) == 30
+
+
+def test_set_list_element_in_nested_pydantic_classes(user_02):
+    email = Lens('emails.1')
+    email.set(user_02, "alice@hotmail.com")
+    assert email.get(user_02) == "alice@hotmail.com"
+
+
+def test_get_with_separator(user_03):
+    age = Lens('user:user.profiles:age', separator=':')
+    assert age.get(user_03) == 30
+
+    email = Lens('user:user emails:1', separator=':')
+    assert email.get(user_03) == "alice@hotmail.com"
+
+
+def test_fmap(user_01):
+    age = Lens('user.profile.age')
+    age.fmap(lambda x: x+1, user_01)
+    assert age.get(user_01) == 31

@@ -1,0 +1,14 @@
+[project]
+name = "lentezinha"
+version = "0.1.0"
+description = "Tiny Lens (AKA 'lentezinha' in pt-BR) for nested dicts in Python"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.11.7",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
