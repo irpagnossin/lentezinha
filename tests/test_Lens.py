@@ -55,9 +55,3 @@ def test_set_list_element_in_nested_pydantic_classes(user_02):
     email = Lens("emails.1")
     email.set(user_02, "alice@hotmail.com")
     assert user_02.emails[1] == "alice@hotmail.com"
-
-
-def test_fmap(user_01):
-    age = Lens("user.profile.age")
-    age.fmap(lambda x: x + 1, user_01)
-    assert age.get(user_01) == 31

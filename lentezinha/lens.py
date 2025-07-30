@@ -45,9 +45,6 @@ class Lens:
     def _is_valid(self, path: str) -> bool:  # TODO: implement
         return True
 
-    def fmap(self, func: Callable, data) -> None:
-        self.set(data, func(self.get(data)))
-
 
 def _agnostic_set(container: dict | list | BaseModel, key: Any, value: Any) -> None:
     """Equivalent to container[key] = value or container.key = value"""
