@@ -9,12 +9,11 @@ I don't like to do this: `user.get("profile", {}).get("age"))`, where `user` is 
 ## Usage
 
 ```python
+from lentezinha import read, update
+
 user = {"name": "Ana", "profile": {"age": 20}}
 
-from lentezinha import read
 read(user, "profile.age")  # == 20
-
-from lentezinha import update
 update(user, "profile.age", lambda a: a + 1)  # Updates age to 21
 ```
 
@@ -34,16 +33,15 @@ age.set(user, lambda a: a + 1)  # == 28
 It also works with Pydantic:
 
 ```python
+from lentezinha import Lens
 from pydantic import BaseModel
 
-class Profile(BaseModel):
-    age: int
-
 class User(BaseModel):
-    profile: Profile
+    profile: dict
 
-user = User(profile=Profile(age=20))
+user = User(profile={"age": 20})
 
+age = Lens("profile.age")
 age.get(user)  # == 20
 age.set(user, 27)  # == 27
 ```

@@ -10,6 +10,17 @@ def test_get_attribute_from_nested_dicts(user_01):
     assert name.get(user_01) == "Alice"
 
 
+def test_get_returns_none_if_attribte_path_does_not_exist(user_01):
+    age = Lens("user.profile.nickname")
+    assert age.get(user_01) is None
+
+
+def test_get_returns_none_if_attribute_path_is_none():
+    user = { "user": { "profile": None } }
+    name = Lens("user.profile.nickname")
+    assert name.get(user) is None
+
+
 def test_get_last_attribute_is_list_index(user_01):
     email = Lens("user.emails.0")
     assert email.get(user_01) == "alice@gmail.com"
@@ -26,6 +37,7 @@ def test_get_with_separator(user_03):
 
     email = Lens("user:user emails:1", separator=":")
     assert email.get(user_03) == "alice@hotmail.com"
+
 
 
 def test_set_attribute_within_nested_dicts(user_01):
@@ -55,3 +67,11 @@ def test_set_list_element_in_nested_pydantic_classes(user_02):
     email = Lens("emails.1")
     email.set(user_02, "alice@hotmail.com")
     assert user_02.emails[1] == "alice@hotmail.com"
+
+
+def test_lenses_can_be_combined(user_01):
+    profile = Lens("user.profile")
+    age = profile + Lens("age")
+    assert age.get(user_01) == 30
+    assert (Lens("age") + profile).get(user_01) is None
+
